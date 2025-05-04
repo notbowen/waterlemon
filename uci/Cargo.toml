@@ -1,0 +1,11 @@
+[package]
+name = "uci"
+version = "0.0.1"
+edition = "2021"
+
+[[bin]]
+name = "waterlemon"
+path = "src/main.rs"
+
+[dependencies]
+engine = { path = "../engine" }
