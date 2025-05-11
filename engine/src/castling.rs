@@ -53,6 +53,23 @@ impl Castling {
         self.rights & Self::BLACK_000 != 0
     }
 
+    // Methods to add castling rights
+    pub fn add_white_kingside(&mut self) {
+        self.rights |= Self::WHITE_00;
+    }
+
+    pub fn add_white_queenside(&mut self) {
+        self.rights |= Self::WHITE_000;
+    }
+
+    pub fn add_black_kingside(&mut self) {
+        self.rights |= Self::BLACK_00;
+    }
+
+    pub fn add_black_queenside(&mut self) {
+        self.rights |= Self::BLACK_000;
+    }
+
     // Methods to modify castling rights
     pub fn remove_white_castling(&mut self) {
         self.rights &= !Self::WHITE_CASTLING;

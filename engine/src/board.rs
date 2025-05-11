@@ -1,10 +1,7 @@
 #![allow(dead_code)]
 
 use crate::{
-    bitboard::BitBoard,
-    castling::Castling,
-    fen::{self, FenParseError},
-    piece::Color,
+    bitboard::BitBoard, castling::Castling, errors::FenParseError, fen, piece::Color,
     square::Square,
 };
 
@@ -19,7 +16,7 @@ pub struct Board {
     pub en_passant_square: Option<Square>,
 
     pub halfmove_clock: u8,
-    pub fullmove_number: u16,
+    pub fullmove_clock: u16,
 }
 
 impl Board {
@@ -38,10 +35,14 @@ impl Board {
             castling_rights: Castling::none(),
             en_passant_square: None,
             halfmove_clock: 0,
-            fullmove_number: 0,
+            fullmove_clock: 1,
         };
 
         fen::parse_piece_placement(&mut board, split_fen[0])?;
+        fen::parse_playing_side(&mut board, split_fen[1])?;
+        fen::parse_castling_rights(&mut board, split_fen[2])?;
+        fen::parse_en_passant(&mut board, split_fen[3])?;
+        fen::parse_move_clocks(&mut board, split_fen[4], split_fen[5])?;
 
         Ok(board)
     }
@@ -53,9 +54,10 @@ mod board_test {
 
     #[test]
     fn test_default_fen() {
-        assert_eq!(
-            Board::from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1").is_ok(),
-            true
-        );
+        let board = Board::from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        assert_eq!(board.is_ok(), true);
+
+        let board = board.unwrap();
+        println!("{:#?}", board);
     }
 }
