@@ -2,7 +2,7 @@
 
 use std::fmt;
 
-use crate::errors::BitboardError;
+use crate::{errors::BitboardError, square::Square};
 
 #[derive(Debug, Clone, Copy)]
 pub struct BitBoard(pub u64);
@@ -12,8 +12,20 @@ impl BitBoard {
         BitBoard(0)
     }
 
+    /// Sets the bit at `Square`
+    pub fn set_square(&mut self, square: &Square) {
+        let (rank, file) = square.to_coords();
+        self.set_bit(rank, file).unwrap();
+    }
+
+    /// Unsets the bit at `Square`
+    pub fn unset_square(&mut self, square: &Square) {
+        let (rank, file) = square.to_coords();
+        self.unset_bit(rank, file).unwrap();
+    }
+
     /// Sets the bit at `rank` and `file`
-    pub fn set_bit(&mut self, rank: usize, file: usize) -> Result<(), BitboardError> {
+    pub fn set_bit(&mut self, rank: u8, file: u8) -> Result<(), BitboardError> {
         if rank > 7 || file > 7 {
             return Err(BitboardError::InvalidRankOrFile);
         }
@@ -25,9 +37,22 @@ impl BitBoard {
         Ok(())
     }
 
+    /// Unsets the bit at `rank` and `file`
+    pub fn unset_bit(&mut self, rank: u8, file: u8) -> Result<(), BitboardError> {
+        if rank > 7 || file > 7 {
+            return Err(BitboardError::InvalidRankOrFile);
+        }
+
+        let pos = rank * 8 + file;
+        let bit: u64 = 1 << pos;
+        self.0 &= !bit;
+
+        Ok(())
+    }
+
     /// Gets the bit at `rank` and `file`
     /// Returns true if the bit is set, false otherwise
-    pub fn get_bit(&self, rank: usize, file: usize) -> Result<bool, BitboardError> {
+    pub fn get_bit(&self, rank: u8, file: u8) -> Result<bool, BitboardError> {
         if rank > 7 || file > 7 {
             return Err(BitboardError::InvalidRankOrFile);
         }

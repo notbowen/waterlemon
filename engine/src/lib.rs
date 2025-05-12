@@ -1,8 +1,8 @@
 mod bitboard;
 mod board;
 mod castling;
-mod constants;
 mod errors;
 mod fen;
-mod piece;
+mod movegen;
+mod objects;
 mod square;

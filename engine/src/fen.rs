@@ -3,9 +3,8 @@
 use crate::{
     board::Board,
     castling::Castling,
-    constants::{Pieces, Sides},
     errors::FenParseError,
-    piece::Color,
+    objects::{Pieces, Sides},
     square::Square,
 };
 
@@ -14,63 +13,77 @@ pub fn parse_piece_placement(board: &mut Board, placement: &str) -> Result<(), F
     let ranks = placement.split('/').collect::<Vec<&str>>();
 
     for (rank, rank_str) in ranks.iter().enumerate() {
+        let rank = rank as u8;
         let mut file = 0;
+
         for piece in rank_str.chars() {
             match piece {
                 // Black Pieces
                 'r' => {
                     board.piece_bb[Sides::BLACK][Pieces::ROOK].set_bit(rank, file)?;
                     board.color_bb[Sides::BLACK].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'n' => {
                     board.piece_bb[Sides::BLACK][Pieces::KNIGHT].set_bit(rank, file)?;
                     board.color_bb[Sides::BLACK].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'b' => {
                     board.piece_bb[Sides::BLACK][Pieces::BISHOP].set_bit(rank, file)?;
                     board.color_bb[Sides::BLACK].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'q' => {
                     board.piece_bb[Sides::BLACK][Pieces::QUEEN].set_bit(rank, file)?;
                     board.color_bb[Sides::BLACK].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'k' => {
                     board.piece_bb[Sides::BLACK][Pieces::KING].set_bit(rank, file)?;
                     board.color_bb[Sides::BLACK].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'p' => {
                     board.piece_bb[Sides::BLACK][Pieces::PAWN].set_bit(rank, file)?;
                     board.color_bb[Sides::BLACK].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
 
                 // White Pieces
                 'R' => {
                     board.piece_bb[Sides::WHITE][Pieces::ROOK].set_bit(rank, file)?;
                     board.color_bb[Sides::WHITE].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'N' => {
                     board.piece_bb[Sides::WHITE][Pieces::KNIGHT].set_bit(rank, file)?;
                     board.color_bb[Sides::WHITE].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'B' => {
                     board.piece_bb[Sides::WHITE][Pieces::BISHOP].set_bit(rank, file)?;
                     board.color_bb[Sides::WHITE].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'Q' => {
                     board.piece_bb[Sides::WHITE][Pieces::QUEEN].set_bit(rank, file)?;
                     board.color_bb[Sides::WHITE].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'K' => {
                     board.piece_bb[Sides::WHITE][Pieces::KING].set_bit(rank, file)?;
                     board.color_bb[Sides::WHITE].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
                 'P' => {
                     board.piece_bb[Sides::WHITE][Pieces::PAWN].set_bit(rank, file)?;
                     board.color_bb[Sides::WHITE].set_bit(rank, file)?;
+                    board.occupied_bb.set_bit(rank, file)?;
                 }
 
                 inc => match inc.to_digit(10) {
-                    Some(f) => file += (f as usize) - 1,
+                    Some(f) => file += (f as u8) - 1,
                     None => return Err(FenParseError::InvalidPiecePlacement),
                 },
             }
@@ -85,8 +98,8 @@ pub fn parse_piece_placement(board: &mut Board, placement: &str) -> Result<(), F
 /// Sets the side that's playing (second in FEN string)
 pub fn parse_playing_side(board: &mut Board, side: &str) -> Result<(), FenParseError> {
     match side {
-        "w" => board.side_to_move = Color::White,
-        "b" => board.side_to_move = Color::Black,
+        "w" => board.side_to_move = Sides::WHITE,
+        "b" => board.side_to_move = Sides::BLACK,
         _ => return Err(FenParseError::InvalidSide),
     }
 

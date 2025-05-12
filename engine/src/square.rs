@@ -4,7 +4,7 @@ use crate::errors::SquareError;
 
 #[repr(u8)]
 #[rustfmt::skip]
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum Square {
     None,
     A1, B1, C1, D1, E1, F1, G1, H1,
@@ -27,6 +27,15 @@ impl Square {
         let position = (rank * 8) + file + 1;
 
         unsafe { Ok(std::mem::transmute::<u8, Square>(position)) }
+    }
+
+    /// Returns a tuple containing `(rank, file)` of the requested `Square`
+    /// Both `rank` and `file` are 0-indexed
+    pub fn to_coords(&self) -> (u8, u8) {
+        let pos = (*self as u8) - 1;
+        let rank = pos / 8;
+        let file = pos % 8;
+        (rank, file)
     }
 
     /// Returns the square representation of the square string
@@ -63,5 +72,18 @@ impl Square {
         };
 
         Self::from_coords(rank, file)
+    }
+}
+
+#[cfg(test)]
+mod square_tests {
+    use super::*;
+
+    #[test]
+    fn test_square_conversion() {
+        assert_eq!(Square::to_coords(&Square::A1), (0, 0));
+        assert_eq!(Square::to_coords(&Square::H1), (0, 7));
+        assert_eq!(Square::to_coords(&Square::A8), (7, 0));
+        assert_eq!(Square::to_coords(&Square::H8), (7, 7));
     }
 }
